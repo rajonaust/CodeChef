@@ -1,0 +1,94 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+    ALGORITHM : Binary Search
+*/
+ 
+#include <bits/stdc++.h>
+using namespace std;
+ 
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+ 
+typedef long long ll ;
+typedef unsigned long long ull ;
+ 
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+vector <int> odd , even ;
+set <int> Red , Blue ;
+ll odd_search(ll lo , ll hi)
+{
+    return upper_bound(odd.begin(),odd.end(),hi) - lower_bound(odd.begin(),odd.end(),lo) ;
+}
+ll even_search(ll lo,ll hi)
+{
+    return upper_bound(even.begin(),even.end(),hi) - lower_bound(even.begin(),even.end(),lo) ;
+}
+ll solve(ll N ,int K)
+{
+    Red.clear();Blue.clear();
+    odd.clear();even.clear();
+ 
+    while( K-- )
+    {
+        int x , y ;
+        scanf("%d%d",&x,&y);
+        Red.insert(x-y+N);
+        Blue.insert(x+y-1);
+    }
+ 
+    ll ans = 0 ;
+    for(auto i:Red)
+    {
+        if(i<=N) ans+=i;
+        else ans=ans+(2*N-i);
+ 
+        if(i%2) odd.pb(i);
+        else even.pb(i);
+    }
+ 
+    for(auto i:Blue)
+    {
+        if(i<=N) ans+=i;
+        else ans=ans+(2*N-i);
+ 
+        if(i<=N)
+        {
+            ll hi = N+i-1 , lo = N-i+1 ;
+            if(hi%2) ans-=odd_search(lo,hi);
+            else ans-=even_search(lo,hi);
+        }
+        else
+        {
+            ll hi = (2*N-1)-(i-N) , lo = 1+(i-N) ;
+            if(hi%2) ans-=odd_search(lo,hi);
+            else ans-=even_search(lo,hi);
+        }
+    }
+ 
+    return N*N-ans ;
+}
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    int T ;
+    cin >> T ;
+    while( T-- )
+    {
+        int N , K ;
+        cin >> N >> K ;
+        cout << solve(N,K) << endl ;
+    }
+    return 0;
+}
