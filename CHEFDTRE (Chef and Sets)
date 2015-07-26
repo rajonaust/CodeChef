@@ -1,0 +1,75 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+    ALGORITHM : DSU & set
+*/
+ 
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds ;
+using namespace std;
+template <typename T>
+using Set = tree<T,null_type,less<T>,rb_tree_tag,tree_order_statistics_node_update>;
+ 
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+ 
+typedef long long ll ;
+typedef unsigned long long ull ;
+ 
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+int N , Q , par[200000+10] , cnt ;
+Set <int> S[100000+10];
+int find_parent(int x)
+{
+    if(par[x]==x) return x ;
+    else return par[x] = find_parent(par[x]);
+}
+void Union(int a,int b)
+{
+    int x = find_parent(a);
+    int y = find_parent(b);
+ 
+    if(S[x].size()<S[y].size()) swap(x,y) ;
+    for(auto i:S[y]) S[x].insert(i);
+ 
+    par[y] = x ;
+    par[++cnt] = x ;
+}
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    cin >> N >> Q ;
+    for(int i=1;i<=N;i++) par[i] = i , S[i].insert(i);
+    cnt = N ;
+    while( Q-- )
+    {
+        string h ;
+        cin >> h ;
+        if(h[0]=='U')
+        {
+            int a , b ;
+            cin >> a >> b ;
+            Union(a,b);
+        }
+        else
+        {
+            int a , k ;
+            cin >> a >> k ;
+            cout << *S[find_parent(a)].find_by_order(k-1) << endl ;
+        }
+    }
+    return 0;
+}
