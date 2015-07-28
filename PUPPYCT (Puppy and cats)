@@ -26,16 +26,20 @@ typedef unsigned long long ull ;
 /* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
 /* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
 /* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+
 vector <int> odd , even ;
 set <int> Red , Blue ;
+
 ll odd_search(ll lo , ll hi)
 {
     return upper_bound(odd.begin(),odd.end(),hi) - lower_bound(odd.begin(),odd.end(),lo) ;
 }
+
 ll even_search(ll lo,ll hi)
 {
     return upper_bound(even.begin(),even.end(),hi) - lower_bound(even.begin(),even.end(),lo) ;
 }
+
 ll solve(ll N ,int K)
 {
     Red.clear();Blue.clear();
@@ -80,6 +84,7 @@ ll solve(ll N ,int K)
  
     return N*N-ans ;
 }
+
 int main()
 {
     //freopen("input.txt","r",stdin);
