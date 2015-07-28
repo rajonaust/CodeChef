@@ -50,6 +50,7 @@ void pre_calculation()
  
     for(int i=1;i<=mx;i++) store[i] = store[i-1] + phi[i] ;
 }
+
 ll phiSum(ll n)
 {
     if(n<=mx) return store[n];
@@ -68,6 +69,7 @@ ll phiSum(ll n)
  
     return ans ;
 }
+
 int main()
 {
     //freopen("input.txt","r",stdin);
