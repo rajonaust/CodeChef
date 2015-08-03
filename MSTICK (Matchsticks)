@@ -1,0 +1,80 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+
+    Problem Name : MSTICK (Matchsticks) ( CodeChef )
+    ALGORITHM : RMQ
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+
+typedef long long ll ;
+typedef unsigned long long ull ;
+
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+
+int N , Q , arr[100000+10] , STmin[25][100000+10] , STmax[25][100000+10] ;
+
+pair<int,int> query(int l,int r)
+{
+    int k = log2(r-l);
+    if(r==l) k = 0 ;
+
+    int mn = min(STmin[k][l],STmin[k][r-(1<<k)+1]);
+    int mx = max(STmax[k][l],STmax[k][r-(1<<k)+1]);
+
+    return mp(mx,mn) ;
+}
+
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    scanf("%d",&N);
+    for(int i=0;i<N;i++)
+    {
+        scanf("%d",&arr[i]);
+        STmin[0][i] = STmax[0][i] = arr[i] ;
+    }
+
+    for(int k=1;(1<<k)<N;k++)
+    {
+        for(int i=0;i+(1<<k)<=N;i++)
+        {
+            STmin[k][i] = min(STmin[k-1][i],STmin[k-1][i+(1<<(k-1))]);
+            STmax[k][i] = max(STmax[k-1][i],STmax[k-1][i+(1<<(k-1))]);
+        }
+    }
+
+    scanf("%d",&Q);
+    while( Q-- )
+    {
+        int l , r ;
+        double x , y , z , y1 = 0.0 , y2 = 0.0 ;
+        scanf("%d%d",&l,&r);
+
+        x = (double)query(l,r).ss ;
+        z = ((double)query(l,r).ff-x)/2.0;
+
+        if(l!=0) y1=query(0,l-1).ff;
+        if(r!=N-1) y2=query(r+1,N-1).ff;
+        y = max(y1,y2);
+
+        cout << setprecision(1) << fixed << x+max(y,z) << endl ;
+    }
+    return 0;
+}
