@@ -1,0 +1,79 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+
+    Problem Name :  EXPGAME (Exponential Game) (CodeChef)
+    ALGORITHM : Game Theory
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+
+typedef long long ll ;
+typedef unsigned long long ull ;
+
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+
+vector <int> power ;
+int dp[100000+10] ;
+
+int grundy_number(int value)
+{
+    int &ret = dp[value] ;
+    if(ret!=-1) return ret;
+    ret = 0 ;
+
+    set<int> S ;
+
+    for(int i=0;i<power.size();i++)
+    {
+        if(value-power[i]>=0) S.insert(grundy_number(value-power[i]));
+    }
+
+    while(S.count(ret)) ret++;
+
+    return ret ;
+}
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    memo(dp,-1);
+    for(int i=1;;i++)
+    {
+        int ans = 1 ;
+        for(int j=1;j<=i;j++) ans=ans*i;
+        if(ans>100000) break ;
+        power.pb(ans);
+    }
+
+    int T ;
+    cin >> T ;
+    while( T-- )
+    {
+        int N , Nim = 0 ;
+        cin >> N ;
+        while( N-- )
+        {
+            int a ;
+            cin >> a ;
+            Nim^=grundy_number(a);
+        }
+        if(Nim) puts("Little Chef");
+        else puts("Head Chef");
+    }
+    return 0;
+}
