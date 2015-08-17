@@ -1,0 +1,122 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+    Problem Name : DCGAME (Devu And Churu) ( CodeChef )
+    ALGORITHM : Histogram + Binary Search
+*/
+ 
+#include <bits/stdc++.h>
+using namespace std;
+ 
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+ 
+typedef long long ll ;
+typedef unsigned long long ull ;
+ 
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+ 
+int  N , M , K , idx = 1 ;
+int arr[1000000+10] , L[1000000+10] , R[1000000+10] , St[1000000+10] , tag[1000000+10] ;
+char d1[3] , d2[3] ;
+ll sum[1000000+10] ;
+map <int,ll> cnt ;
+ 
+void subarray_process()
+{
+    int point = 0 ;
+    for(int i=1;i<=N;i++)
+    {
+        while(point!=0&&arr[i]>=arr[St[point]]) point--;
+        if(point==0) L[i] = 1 ;
+        else L[i] = St[point]+1 ;
+        point++;
+        St[point]=i;
+    }
+ 
+    point = 0 ;
+    for(int i=N;i>=1;i--)
+    {
+        while(point!=0&&arr[i]>arr[St[point]]) point-- ;
+        if(point==0) R[i] = N ;
+        else R[i] = St[point]-1 ;
+        point++;
+        St[point] = i ;
+     }
+ 
+     for(int i=1;i<=N;i++)
+     {
+         ll mn = i - L[i]+1 , mx = R[i] - i+1 ;
+         cnt[arr[i]]+=mx*mn;
+     }
+ 
+     for(auto it=begin(cnt);it!=end(cnt);++it)
+     {
+         tag[idx] = it->ff ;
+         sum[idx] = sum[idx-1]+it->ss ;
+         idx++;
+     }
+}
+ 
+void decision(ll f)
+{
+    if(f%2)
+    {
+        if(d2[0]=='D') printf("D");else printf("C");
+    }
+    else
+    {
+        if(d2[0]=='D') printf("C");else printf("D");
+    }
+}
+ 
+int main()
+{
+    //freopen("inp.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+ 
+    scanf("%d%d",&N,&M);
+    for(int i=1;i<=N;i++) scanf("%d",&arr[i]);
+ 
+    subarray_process();
+ 
+    while( M-- )
+    {
+        scanf("%s%d%s",&d1,&K,&d2);
+        ll f ;
+ 
+        switch( d1[0] )
+        {
+            case '>' :
+                f = upper_bound(&tag[1],&tag[idx],K)-tag;
+                f=sum[idx-1] - sum[f-1] ;
+                decision(f);
+                break ;
+ 
+            case '<' :
+                f = lower_bound(&tag[1],&tag[idx],K)-tag-1;
+                f=sum[f] ;
+                decision(f);
+                break ;
+ 
+            case '=' :
+                f = lower_bound(&tag[1],&tag[idx],K)-tag ;
+                if(tag[f]!=K) f = 0 ; else f = sum[f] - sum[f-1] ;
+                decision(f);
+                break ;
+        }
+    }
+ 
+    puts("");
+    return 0;
+}
