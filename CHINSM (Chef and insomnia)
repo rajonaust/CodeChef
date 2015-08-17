@@ -1,0 +1,66 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+    
+    Problem Name : CHINSM (Chef and insomnia) ( CodeChef )
+    ALGORITHM : Number Theory
+*/
+ 
+#include <bits/stdc++.h>
+using namespace std;
+ 
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+ 
+typedef long long ll ;
+typedef unsigned long long ull ;
+ 
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+ 
+int N , K , cnt[100000+10]  , mx = 0 ;
+ll ans = 0 ;
+vector <int> divisor[100000+10];
+ 
+void pre_process()
+{
+    for(int i=1;i<=100000;i++)
+    {
+        for(int j=i;j<=100000;j+=i) divisor[j].pb(i);
+    }
+}
+ 
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    pre_process();
+ 
+    scanf("%d%d",&N,&K);
+ 
+    for(int i=1;i<=N;i++)
+    {
+        int a ;
+        scanf("%d",&a);
+        if(a>K)
+        {
+            mx = max(mx,max(cnt[K],cnt[a])) ;
+            for(int j=0;j<divisor[a-K].size();j++) if(divisor[a-K][j]>K) cnt[divisor[a-K][j]] = i ;
+        }
+        else if(a==K) cnt[a] = i ;
+        ans=ans+(i-mx) ;
+    }
+ 
+    cout << ans << endl ;
+ 
+    return 0;
+}
