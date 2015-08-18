@@ -1,0 +1,181 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+
+    Problem Name : AMR14B (Road Decoration) ( CodeChef )
+    ALGORITHM : Graph Theory
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+
+typedef long long ll ;
+typedef unsigned long long ull ;
+
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+
+struct node
+{
+    int u ;
+    ll w , add ;
+};
+
+struct edge
+{
+    int u , v;
+    ll w;
+};
+
+int N , M , parent[20000+10] ;
+vector <int> graph[20000+10] , cost[20000+10] ;
+vector <edge> G;
+
+class cmp
+{
+    public :
+    bool operator () (node &a,node &b)
+    {
+        if(a.w==b.w)
+        {
+            if(a.add>b.add) return true ; return false ;
+        }
+        if(a.w>b.w) return true; else return false;
+    }
+};
+
+ll Dijkstra(int N,int source)
+{
+    bool visit[20000+10] ;
+    for(int i=0;i<=N;i++) visit[i]=false;
+    priority_queue <node,vector<node>,cmp> Q;
+
+    node n;
+    n.u=source;n.w=0;n.add=0;
+    Q.push(n);
+
+    ll ans = 0 ;
+
+    while(Q.size()!=0)
+    {
+        n = Q.top(); Q.pop();
+        int u = n.u ;
+        ll w = n.w;
+
+        if(visit[u]) continue;
+        visit[u]=true;
+        ans = ans+n.add;
+
+        for(int i=0;i<graph[u].size();i++)
+        {
+            int v = graph[u][i];
+            if(visit[v]==false)
+            {
+                n.u=v ; n.w=w+(ll)cost[u][i];
+                n.add=cost[u][i] ;
+                Q.push(n);
+            }
+        }
+    }
+
+    for(int i=0;i<N;i++) if(visit[i]==false) return -1 ;
+
+    return ans ;
+}
+
+
+
+
+int find_parent(int x)
+{
+    if(parent[x]==x) return x;
+    else return parent[x]=find_parent(parent[x]);
+}
+
+bool cmp(edge a,edge b)
+{
+    return a.w<b.w;
+}
+
+ll MST(int N)
+{
+    for(int i=0;i<=N;i++) parent[i]=i;
+
+    sort(G.begin(),G.end(),cmp);
+
+    int cnt = 0;
+    ll answer=0;
+
+    for(int i=0;i<G.size();i++)
+    {
+        int x = find_parent(G[i].u);
+        int y = find_parent(G[i].v);
+
+        if(x!=y)
+        {
+            parent[x]=y;
+            cnt++;
+            answer=answer+G[i].w;
+        }
+
+        if(cnt==N-1) break;
+    }
+
+    if(cnt!=N-1) return -1;
+
+    return answer;
+}
+
+void Reset(int N)
+{
+    for(int i=0;i<N;i++) graph[i].clear() , cost[i].clear() ;
+    G.clear();
+}
+
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    int T ;
+    scanf("%d",&T);
+
+    while( T-- )
+    {
+        scanf("%d%d",&N,&M);
+        while( M-- )
+        {
+            int u , v , w ;
+            scanf("%d%d%d",&u,&v,&w);
+
+            graph[u].push_back(v);
+            cost[u].push_back(w);
+            graph[v].push_back(u);
+            cost[v].push_back(w);
+
+            edge get;
+            get.u=u;get.v=v;get.w=w;
+            G.push_back(get);
+        }
+
+        ll ans1 = Dijkstra(N,0);
+        ll ans2 = MST(N);
+
+        if(ans1==ans2&&ans1!=-1&&ans2!=-1) puts("YES");
+        else puts("NO");
+
+        Reset(N);
+    }
+    return 0;
+}
