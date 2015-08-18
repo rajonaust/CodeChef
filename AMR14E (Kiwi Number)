@@ -1,0 +1,88 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+
+    Problem Name : AMR14E (Kiwi Number) ( CodeChef )
+    ALGORITHM : Number Theory
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+
+typedef long long ll ;
+typedef unsigned long long ull ;
+
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+
+char arr[100000+10];
+int compressed[200000+10] , cnt[200000+10] ;
+vector <int> prime ;
+
+void sieve()
+{
+    for(int i=2;i<=100000;i++)
+    {
+        if(arr[i]==NULL)
+        {
+            prime.pb(i);
+            for(int j=i+i;j<=100000;j+=i) arr[j] = 'N' ;
+        }
+    }
+}
+
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    sieve();
+
+    int T ;
+    scanf("%d",&T);
+
+    while( T-- )
+    {
+        int a , b ;
+        scanf("%d%d",&a,&b);
+
+        int x = 1 ;
+        for(int i=a;i<=b;i++) compressed[x] = i , cnt[x] = 1 , x++ ;
+
+        for(int i=0;i<prime.size();i++)
+        {
+            int j = prime[i] ;
+            int st = a%j ;
+
+            if(st!=0) st = 1+(j-st) ; else st = 1 ;
+
+            for(int k=st;k<x;k+=j)
+            {
+                int c = 0 ;
+                while(compressed[k]%j==0) compressed[k]/=j , c++;
+                cnt[k]*=(c+1);
+            }
+        }
+
+        int ans = 0 ;
+        for(int i=1;i<x;i++)
+        {
+            if(compressed[i]!=1) cnt[i]*=2;
+            if(arr[cnt[i]]==NULL) ans++;
+        }
+
+        cout << ans << endl ;
+    }
+    return 0;
+}
