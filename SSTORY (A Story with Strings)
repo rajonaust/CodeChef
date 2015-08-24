@@ -1,0 +1,165 @@
+/*
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+
+    Problem Name : SSTORY (A Story with Strings) ( CodeChef )
+    ALGORITHM : Suffix Array
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+
+typedef long long ll ;
+typedef unsigned long long ull ;
+
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+
+const int mx = 300000 ;
+
+struct info
+{
+    int tup[2] , index ;
+    bool operator < (const info &A) const
+    {
+        return tup[0] == A.tup[0] ? tup[1] < A.tup[1] : tup[0] < A.tup[0] ;
+    }
+}SA[2*mx+10];
+
+char input[2*mx+10] ;
+int lcp[2*mx+10] , R[30][2*mx+10] , mark[2*mx+10] , step , x , y , z , len ;
+char A[mx+10] , B[mx+10] ;
+
+void suffixSort()
+{
+    int N = strlen(input);
+    for(int i=0;i<N;i++) R[0][i] = input[i] ;
+    step=1;
+    for(int jump=1;jump<=N;jump<<=1,step++)
+    {
+        for(int j=0;j<N;j++)
+        {
+            SA[j].index = j ;
+            SA[j].tup[0] = R[step-1][j] ;
+            SA[j].tup[1] = j+jump < N ? R[step-1][j+jump] : -1 ;
+        }
+        sort(SA,SA+N);
+        R[step][SA[0].index] = 1 ;
+        for(int j=1;j<N;j++)
+        {
+            R[step][SA[j].index] = SA[j].tup[0] == SA[j-1].tup[0] &&
+                SA[j].tup[1] == SA[j-1].tup[1] ? R[step][SA[j-1].index] : R[step][SA[j-1].index]+1 ;
+        }
+    }
+}
+
+void getlcp()
+{
+    int N = strlen(input);
+    lcp[0] = 0 ;
+    for(int i=1;i<N;i++)
+    {
+        lcp[i]=0;
+        int indexN = SA[i].index ;
+        int indexP = SA[i-1].index ;
+        for(int j=step-1;j>=0;j--)
+        {
+            if(R[j][indexP]==R[j][indexN])
+            {
+                lcp[i]+=(1<<j);
+                indexN+=(1<<j);
+                indexP+=(1<<j);
+            }
+        }
+    }
+}
+
+int getid(int len)
+{
+    if(len<=x) return 1 ;
+    return 2 ;
+}
+
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
+    scanf("%s",&A);
+    scanf("%s",&B);
+
+    memo(R,-1);
+    strcat(input,A);
+    input[strlen(input)]='.';
+    strcat(input,B);
+
+    x = strlen(A);
+    y = strlen(B);
+    len = strlen(input);
+
+    suffixSort();
+    getlcp();
+
+    int ANS = 0 ;
+    set <string> all_possible_solution ;
+
+    for(int i=1;i<len;i++)
+    {
+        int v = getid(SA[i-1].index);
+        int u = getid(SA[i].index);
+
+        if(u!=v)
+            ANS = max(ANS,lcp[i]) , mark[i] = 1 ;
+    }
+
+    if(ANS==0) {puts("0");return 0 ;}
+
+    for(int i=0;i<len;i++)
+    {
+        if(mark[i]&&ANS==lcp[i])
+        {
+            int index = getid(SA[i].index);
+            if(index==1)
+            {
+                string temp = "" ;
+                for(int j=0;j<ANS;j++) temp+=A[SA[i].index+j];
+                all_possible_solution.insert(temp);
+            }
+            else
+            {
+                string temp = "" ;
+                for(int j=0;j<ANS;j++) temp+=B[SA[i].index-x-1+j];
+                all_possible_solution.insert(temp);
+            }
+        }
+    }
+
+    string temp ;
+    for(int i=0;i<ANS;i++) temp+=B[i] ;
+
+    for(int i=ANS;i<len;i++)
+    {
+        if(all_possible_solution.count(temp))
+        {
+            cout << temp << endl ;
+            cout << ANS << endl ;
+            break ;
+        }
+
+        temp.erase(temp.begin());
+        temp+=B[i];
+    }
+
+    return 0;
+}
